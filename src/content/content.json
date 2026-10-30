@@ -1,0 +1,67 @@
+{
+  "projects": [
+    {
+      "year": "2026",
+      "title": "Capstone, Head of Design (CAD)",
+      "summary": "Telescopic electric scaffolding lift.",
+      "paper": { "category": "CAPSTONE", "period": "2025 to 2026", "title": "Head of\nDesign, CAD", "text": "Telescopic electric scaffolding lift. MECH 490." }
+    },
+    {
+      "year": "2026",
+      "title": "F1 Predict",
+      "summary": "Ridge regression on lap times. RMSE 2.35 s, R² 0.946.",
+      "paper": { "category": "DATA ANALYTICS", "period": "2026", "title": "F1 Predict", "text": "Ridge regression on tyre compound. RMSE 2.35 s, R² 0.946." }
+    },
+    {
+      "year": "2026",
+      "title": "Job-Search Automation",
+      "summary": "Notion workspace run by scheduled agents.",
+      "paper": { "category": "AUTOMATION", "period": "2026", "title": "Job-Search\nAutomation", "text": "Notion workspace run by scheduled agents." }
+    },
+    {
+      "year": "2026",
+      "title": "Anew",
+      "summary": "Streak-based habit tracker for iOS, built in Swift.",
+      "paper": { "category": "MOBILE · iOS", "period": "2026", "title": "Anew", "text": "Streak-based habit tracker built in Swift." }
+    },
+    {
+      "year": "2025",
+      "title": "Haulotte, R&D Engineer",
+      "summary": "Six-month internship on MEWPs.",
+      "paper": { "category": "HAULOTTE", "period": "2025", "title": "R&D\nEngineer", "text": "Six-month internship, aerial work platforms." }
+    },
+    {
+      "year": "2022",
+      "title": "BOOMER",
+      "summary": "Co-founded digital-services venture for SMEs.",
+      "paper": { "category": "CO-FOUNDER", "period": "2022", "title": "BOOMER", "text": "Digital services venture for SMEs." }
+    }
+  ],
+  "education": [
+    {
+      "year": "2028",
+      "title": "Master in Management",
+      "summary": "ESSEC Business School, Paris. In progress.",
+      "diploma": { "institution": "ESSEC Business School", "degree": "Master in Management", "detail": "Paris · 2026 to 2028", "note": "In progress" }
+    },
+    {
+      "year": "2026",
+      "title": "B.Eng. Mechanical Engineering",
+      "summary": "Concordia University, Montréal.",
+      "diploma": { "institution": "Concordia University", "degree": "Bachelor of Engineering", "detail": "Mechanical Engineering · Montréal · 2026", "note": "" }
+    },
+    {
+      "year": "2024",
+      "title": "Exchange, Mechanical Engineering",
+      "summary": "National University of Singapore.",
+      "diploma": { "institution": "National University of Singapore", "degree": "Exchange Programme", "detail": "Mechanical Engineering · 2024", "note": "" }
+    }
+  ],
+  "contact": {
+    "email": "gabin.douchet@essec.edu",
+    "links": [
+      { "label": "LinkedIn", "href": "https://www.linkedin.com/in/gabindouchet/" },
+      { "label": "Current site", "href": "https://gabindouchet.github.io/Portfolio/" }
+    ]
+  }
+}
