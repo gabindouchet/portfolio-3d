@@ -22,8 +22,10 @@ Everything in it is approved: mood, palette, camera path, scroll feel. Keep it a
   blinking roof lights, distance fade, exponential + height fog toward a magenta low haze).
 - Ground plane with glowing street grid, sky dome shader, flying traffic (Points), rain (LineSegments),
   dust motes in the lamp light, three original neon signs (canvas textures, additive).
-- Office: primitive geometry placeholders (desk, lamp with shadow-casting SpotLight, laptop, mug,
-  6 project papers and 3 diplomas as canvas textures).
+- Office (phase 3 done): `public/models/office.glb` + EXR lightmaps in `public/textures/office/lightmaps/`.
+  Baked shell is MeshBasicMaterial (albedo x lightmap), props are PBR lit by real-time lights in
+  `src/scene/lights.js` (desk lamp is the only shadow caster). Papers, diplomas and laptop screen get
+  canvas textures from content.json with UVs generated in code (the glb planes have none).
 - Post: UnrealBloom + custom grade pass (ACES, sRGB gamma, chromatic fringe, vignette, grain).
 - Camera: 5 keyframes (position + lookAt), eased interpolation, damped toward scroll, light mouse parallax.
 

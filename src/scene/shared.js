@@ -1,9 +1,15 @@
 import * as THREE from 'three';
 
 // One seeded generator for the whole scene. Every module draws from the same sequence, so the
-// build order in main.js (concrete, city, traffic, rain, office) decides the layout. Changing that
+// build order in main.js (city, traffic, rain, office, dust) decides the layout. Changing that
 // order, or adding rand() calls before the city, reshuffles the skyline.
-export const rand = (() => { let s = 7; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
+export const rand = (() => {
+  let s = 7;
+  // the approved skyline was generated after the prototype's concrete texture took 45,000 draws;
+  // that texture is gone with the glb office, so skip ahead to keep the same city
+  for (let i = 0; i < 45000; i++) s = (s * 16807) % 2147483647;
+  return () => (s = (s * 16807) % 2147483647) / 2147483647;
+})();
 
 export function canvasTex(w, h, draw) {
   const c = document.createElement('canvas'); c.width = w; c.height = h;

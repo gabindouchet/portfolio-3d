@@ -1,15 +1,15 @@
 import './styles.css';
 import * as THREE from 'three';
 import { renderOverlays } from './content/overlay.js';
-import { installLegacyLights } from './scene/legacy-lights.js';
 import { FOG, FOG_DENSITY, createDotTexture } from './scene/shared.js';
-import { createEnvironment, createCityLights } from './scene/lights.js';
+import { createEnvironment, createOfficeLights } from './scene/lights.js';
 import { createSky } from './scene/sky.js';
 import { createCity } from './scene/city.js';
 import { createSigns } from './scene/signs.js';
 import { createTraffic } from './scene/traffic.js';
 import { createRain } from './scene/rain.js';
-import { createConcrete, createOffice } from './scene/office.js';
+import { createOffice } from './scene/office.js';
+import { createDust } from './scene/dust.js';
 import { createComposer } from './post/composer.js';
 import { createCameraRig } from './camera/scroll.js';
 
@@ -22,7 +22,6 @@ async function start() {
   try { await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 2500))]); } catch (e) {}
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  installLegacyLights();
   const canvas = document.getElementById('stage');
   let renderer;
   try { renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' }); }
@@ -39,7 +38,6 @@ async function start() {
   const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.05, 3200);
 
   // build order matters: it fixes the shared rand() sequence (see scene/shared.js)
-  const concrete = createConcrete();
   createEnvironment(renderer, scene);
   const dot = createDotTexture();
   const parts = [
@@ -47,10 +45,11 @@ async function start() {
     createCity(scene),
     createSigns(scene, { reduce }),
     createTraffic(scene, { dot, reduce }),
-    createRain(scene, { reduce }),
-    createOffice(scene, { concrete, dot, reduce })
+    createRain(scene, { reduce })
   ];
-  createCityLights(scene);
+  const office = createOffice(scene);   // draws its paper textures now, then loads the glb
+  parts.push(createDust(scene, { dot, reduce }));
+  createOfficeLights(scene);
   const post = createComposer(renderer, scene, camera, DPR);
 
   const rig = createCameraRig(camera, {
@@ -65,6 +64,9 @@ async function start() {
     renderer.setSize(innerWidth, innerHeight); post.setSize(innerWidth, innerHeight);
   }
   addEventListener('resize', fit); fit();
+
+  // keep the veil up until the office is in; the city still shows if the glb fails
+  try { await office; } catch (e) { console.error('office.glb failed to load', e); }
 
   const timer = new THREE.Timer();
   let first = true;
