@@ -3,6 +3,7 @@ import { KEYS, ease } from './keyframes.js';
 
 // Maps scroll position to a fractional shot index (0 to KEYS.length - 1), damps toward it,
 // and places the camera between keyframes with a light mouse parallax and idle bob.
+// update() returns the damped shot index, which also drives the time of day.
 export function createCameraRig(camera, { shots, railItems, reduce }) {
   let target = 0, cur = 0, mx = 0, my = 0, smx = 0, smy = 0;
 
@@ -28,6 +29,7 @@ export function createCameraRig(camera, { shots, railItems, reduce }) {
       if (!reduce) { tmpP.x += smx * 0.06; tmpP.y -= smy * 0.04; tmpP.y += Math.sin(t * 0.6) * 0.004; }
       camera.position.copy(tmpP); camera.lookAt(tmpT);
       railItems.forEach((el, k) => el.classList.toggle('on', Math.round(cur) === k));
+      return cur;
     }
   };
 }

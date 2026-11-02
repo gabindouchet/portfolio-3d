@@ -5,40 +5,40 @@ Built for fun and to impress recruiters (consulting, strategy, operations). Curr
 https://gabindouchet.github.io/Portfolio/ until this one is finished.
 
 ## Concept
-A desk in a tower office, floor 88, at night, in front of floor-to-ceiling glass over a neon city.
-Mood: Blade Runner 2049 haze, Tron grid. Palette: purple, magenta, fuchsia. Realistic, not low-poly.
-Scrolling drives the camera through 5 shots:
-1. Window: looking out over the city (hero, name + tagline)
-2. Office: step back, full room visible (about)
+A top-floor Paris loft over the rooftops, golden hour turning to blue hour (since phase 4, see
+PHASE4_PARIS.md). Realistic, warm, calm. No purple, magenta, neon, rain or traffic.
+Accent: warm sunset #f2a65a. Scrolling drives the camera through 5 shots and the time of day:
+1. Window: Paris horizon, Eiffel Tower left, sunset right (hero, name + tagline). Golden hour.
+2. Loft: step back, full room visible (about)
 3. Desk: the papers on the desk, one per project (projects)
 4. Wall: framed diplomas on the left wall (education)
-5. Night: back toward the window and the neon sign (contact)
+5. Blue hour: back toward the window, lamps on, city lights lit (contact)
 Scroll only for now, no click interactions. Mobile: decide later.
 
 ## Current state
-`prototype/night-office.html` is the approved style prototype (single file, three r147 UMD from CDN).
-Everything in it is approved: mood, palette, camera path, scroll feel. Keep it as the reference.
-- City: ~1,500 instanced boxes, one custom ShaderMaterial (procedural windows, neon edges, roof rims,
-  blinking roof lights, distance fade, exponential + height fog toward a magenta low haze).
-- Ground plane with glowing street grid, sky dome shader, flying traffic (Points), rain (LineSegments),
-  dust motes in the lamp light, three original neon signs (canvas textures, additive).
-- Office (phase 3 done): `public/models/office.glb` + EXR lightmaps in `public/textures/office/lightmaps/`.
-  Baked shell is MeshBasicMaterial (albedo x lightmap), props are PBR lit by real-time lights in
-  `src/scene/lights.js` (desk lamp is the only shadow caster). Papers, diplomas and laptop screen get
-  canvas textures from content.json with UVs generated in code (the glb planes have none).
-- Post: UnrealBloom + custom grade pass (ACES, sRGB gamma, chromatic fringe, vignette, grain).
+`prototype/night-office.html` is the original night prototype: the camera path and scroll feel still
+come from it, the night look does not. `archive/city-night-realistic.js` is an unused night city.
+- Window view (`src/scene/paris.js`): one photo on a 50 m plane at z = -30 with 2.5D depth parallax
+  (`paris_depth.png`: R nearness, G sky, B lit windows) and a golden to blue hour grade driven by `uT`.
+- Time of day: `uT` = `timeOfDay(shot)` in `src/scene/shared.js` (0 hero, 0.35 desk, 1 contact), passed to
+  every part's `update(ctx)`.
+- Office: `public/models/office.glb` + golden hour EXR lightmaps. Baked shell is MeshBasicMaterial
+  (albedo x lightmap), tinted cool and dimmed as `uT` rises. Props are PBR lit by `src/scene/lights.js`:
+  sun (fades out, shadows), hemisphere fill, desk and floor lamp spots (ramp up). Papers, diplomas and
+  laptop screen get canvas textures from content.json with UVs generated in code (the glb planes have none).
+- Post: r147 UnrealBloom (vendored, subtle for daylight) + grade pass (light fringe, ACES, gamma,
+  vignette, grain). The grade is the output transform, so no OutputPass.
 - Camera: 5 keyframes (position + lookAt), eased interpolation, damped toward scroll, light mouse parallax.
 
-## Stack and structure (target)
+## Stack and structure
 - Vite + vanilla JS ES modules + `three` from npm (latest stable) + `gsap` only if needed. No React.
-- Suggested layout:
-  - `index.html`, `src/main.js`
-  - `src/scene/` city.js, sky.js, traffic.js, rain.js, office.js, signs.js, lights.js
-  - `src/post/` composer.js (bloom + grade)
+- Layout:
+  - `index.html`, `src/main.js`, `src/styles.css`
+  - `src/scene/` paris.js, office.js, lights.js, dust.js, shared.js
+  - `src/post/` composer.js, LegacyBloomPass.js
   - `src/camera/` keyframes.js, scroll.js
-  - `src/content/content.json` (projects, education, contact: text lives here, not in code)
+  - `src/content/content.json` (projects, education, contact: text lives here, not in code), overlay.js
   - `public/models/` glb files, `public/textures/`
-- Use the modern three postprocessing API (`three/addons/...`, OutputPass for color space).
 - Respect `prefers-reduced-motion`. Keep a "skip to content" path. HTML overlays carry all readable text.
 
 ## Next phases
@@ -47,7 +47,9 @@ Everything in it is approved: mood, palette, camera path, scroll feel. Keep it a
    baked lighting (lightmaps) for ambient/city glow, only the desk lamp stays real time for shadows.
    Compress with gltf-transform (meshopt or Draco, KTX2/WebP textures). Budget: 5 to 15 MB total.
 3. Replace placeholder office primitives with the glb. City stays procedural, never modeled.
-4. Performance pass: quality tiers (DPR cap, bloom off, fewer buildings) for weak GPUs and mobile.
+4. Paris at golden hour (PHASE4_PARIS.md): done.
+5. Performance pass: quality tiers (DPR cap, bloom off, shadow map sizes) for weak GPUs and mobile.
+   Confirm the Paris photo licence before going public.
 
 ## Deploy
 GitHub repo `portfolio-3d`, deployed to GitHub Pages with a GitHub Actions workflow (build with Vite,

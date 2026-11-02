@@ -4,8 +4,8 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { LegacyBloomPass } from './LegacyBloomPass.js';
 
-// Grade is the output transform: ACES (Narkowicz fit), pow 1/2.2 gamma, then fringe, vignette and
-// grain in display space. It writes display-ready values, so there is no OutputPass here: OutputPass
+// Grade is the output transform: light chromatic fringe, ACES (Narkowicz fit), pow 1/2.2 gamma, then
+// vignette and grain in display space. It writes display-ready values, so there is no OutputPass here: OutputPass
 // would apply three's own ACES fit and the piecewise sRGB curve, which lifts the deep blacks.
 const GradeShader = {
   uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uExposure: { value: 1.05 }, uRes: { value: new THREE.Vector2(innerWidth, innerHeight) } },
@@ -15,7 +15,7 @@ const GradeShader = {
     float hash(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }
     void main(){
       vec2 c=vUv-.5; float r=dot(c,c);
-      vec2 off=c*.0035;
+      vec2 off=c*.00175;
       vec3 col=vec3(texture2D(tDiffuse,vUv+off).r,texture2D(tDiffuse,vUv).g,texture2D(tDiffuse,vUv-off).b);
       col=aces(col*uExposure);
       col=pow(col,vec3(1./2.2));
@@ -28,7 +28,7 @@ export function createComposer(renderer, scene, camera, dpr) {
   const rt = new THREE.WebGLRenderTarget(innerWidth * dpr, innerHeight * dpr, { type: THREE.HalfFloatType, samples: 4 });
   const composer = new EffectComposer(renderer, rt);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new LegacyBloomPass(new THREE.Vector2(innerWidth / 2, innerHeight / 2), 0.85, 0.55, 0.82);
+  const bloom = new LegacyBloomPass(new THREE.Vector2(innerWidth / 2, innerHeight / 2), 0.35, 0.55, 0.95);   // daylight: subtle, sun and lamps only
   composer.addPass(bloom);
   const grade = new ShaderPass(GradeShader);
   composer.addPass(grade);

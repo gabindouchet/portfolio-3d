@@ -1,17 +1,14 @@
 import './styles.css';
 import * as THREE from 'three';
 import { renderOverlays } from './content/overlay.js';
-import { FOG, FOG_DENSITY, createDotTexture } from './scene/shared.js';
+import { createDotTexture, timeOfDay } from './scene/shared.js';
 import { createEnvironment, createOfficeLights } from './scene/lights.js';
-import { createSky } from './scene/sky.js';
-import { createCity } from './scene/city.js';
-import { createSigns } from './scene/signs.js';
-import { createTraffic } from './scene/traffic.js';
-import { createRain } from './scene/rain.js';
+import { createParisView } from './scene/paris.js';
 import { createOffice } from './scene/office.js';
 import { createDust } from './scene/dust.js';
 import { createComposer } from './post/composer.js';
 import { createCameraRig } from './camera/scroll.js';
+import { KEYS } from './camera/keyframes.js';
 
 renderOverlays();
 
@@ -33,23 +30,18 @@ async function start() {
   renderer.shadowMap.type = THREE.PCFShadowMap;
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(FOG, FOG_DENSITY);
-  scene.background = FOG.clone();
-  const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.05, 3200);
+  scene.background = new THREE.Color(0x1a120d);   // only behind the photo plane, never really seen
+  const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.05, 200);
 
-  // build order matters: it fixes the shared rand() sequence (see scene/shared.js)
   createEnvironment(renderer, scene);
   const dot = createDotTexture();
-  const parts = [
-    createSky(scene),
-    createCity(scene),
-    createSigns(scene, { reduce }),
-    createTraffic(scene, { dot, reduce }),
-    createRain(scene, { reduce })
-  ];
   const office = createOffice(scene);   // draws its paper textures now, then loads the glb
-  parts.push(createDust(scene, { dot, reduce }));
-  createOfficeLights(scene);
+  const parts = [
+    createParisView(scene, { heroPosition: KEYS[0].p, camera, reduce }),
+    office,
+    createDust(scene, { dot, reduce }),
+    createOfficeLights(scene)
+  ];
   const post = createComposer(renderer, scene, camera, DPR);
 
   const rig = createCameraRig(camera, {
@@ -65,15 +57,15 @@ async function start() {
   }
   addEventListener('resize', fit); fit();
 
-  // keep the veil up until the office is in; the city still shows if the glb fails
-  try { await office; } catch (e) { console.error('office.glb failed to load', e); }
+  // keep the veil up until the office is in; the view still shows if the glb fails
+  try { await office.ready; } catch (e) { console.error('office.glb failed to load', e); }
 
   const timer = new THREE.Timer();
   let first = true;
   function frame() {
     timer.update();
     const ctx = { dt: Math.min(timer.getDelta(), 0.05), t: timer.getElapsed(), camera };
-    rig.update(ctx);
+    ctx.uT = timeOfDay(rig.update(ctx));   // 0 golden hour at the hero, 1 blue hour at the contact shot
     for (const p of parts) p.update(ctx);
     post.update(ctx);
     post.render();
