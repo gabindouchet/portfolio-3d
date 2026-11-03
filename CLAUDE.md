@@ -25,7 +25,8 @@ come from it, the night look does not. `archive/city-night-realistic.js` is an u
 - Time of day: `TIME_OF_DAY` in `src/main.js` (0 golden hour, 1 blue hour), fixed at 0 and passed as `uT`
   to every part's `update(ctx)`. The blue hour grade still works if a value above 0 is set.
 - Office: `public/models/office.glb` (with the salon: sofa, armchairs, coffee table, books, espresso, Alps
-  frame, all real-time props) + golden hour EXR lightmaps, mirrored vertically on load (EXR rows are
+  frame, all real-time props; walnut sideboard under the diplomas with books, a mini F1 car, a mini lamp
+  and a vase; sofa and armchairs get a procedural bouclé bump in `src/scene/boucle.js`, they have no UVs) + golden hour EXR lightmaps, mirrored vertically on load (EXR rows are
   bottom-up, glTF UVs top-down). Baked shell is MeshBasicMaterial
   (albedo x lightmap), tinted cool and dimmed if `uT` rises. Props are PBR lit by `src/scene/lights.js`:
   sun (shadows), hemisphere fill, desk and floor lamp spots (all follow `uT`). Papers, diplomas and

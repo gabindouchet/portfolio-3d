@@ -3,6 +3,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { EXRLoader } from 'three/addons/loaders/EXRLoader.js';
 import { rand, canvasTex } from './shared.js';
 import content from '../content/content.json';
+import { applyBoucle } from './boucle.js';
 
 // The office comes from Blender as office.glb (see PHASE2_IMPORT.md and PHASE4_PARIS.md):
 // - baked shell (node extras baked = true): unlit albedo x Cycles lightmap (EXR), no real-time lighting
@@ -140,6 +141,8 @@ async function load(scene, shellMats, shadeMat) {
     // these meshes have no UVs or tangents, so anisotropy (Brass) has no direction: NaN streaks
     for (const m of [mesh.material].flat()) if (m.anisotropy) m.anisotropy = 0;
     if (mesh.material.name === 'FlutedGlass') mesh.material = shadeMat;
+    // sofa and armchairs: bouclé loops in the shader (the Blender bump does not export)
+    for (const m of [mesh.material].flat()) if (/^Boucle/.test(m.name) && !m.userData.boucle) { applyBoucle(m); m.userData.boucle = true; }
     // PlantLeaf was exported without its base color (white); dark green as in the Cycles renders
     for (const m of [mesh.material].flat()) if (m.name === 'PlantLeaf') { m.color.setRGB(0.035, 0.075, 0.03); m.sheenColor?.setRGB(0.12, 0.2, 0.1); }
 
