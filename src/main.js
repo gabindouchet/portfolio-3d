@@ -1,7 +1,8 @@
 import './styles.css';
 import * as THREE from 'three';
 import { renderOverlays } from './content/overlay.js';
-import { createDotTexture, timeOfDay } from './scene/shared.js';
+import { initCards } from './content/cards.js';
+import { createDotTexture } from './scene/shared.js';
 import { createEnvironment, createOfficeLights } from './scene/lights.js';
 import { createParisView } from './scene/paris.js';
 import { createOffice } from './scene/office.js';
@@ -11,6 +12,10 @@ import { createCameraRig } from './camera/scroll.js';
 import { KEYS } from './camera/keyframes.js';
 
 renderOverlays();
+initCards();
+
+// Light is fixed: 0 golden hour (photo as shot), 1 blue hour. Scroll does not change it.
+const TIME_OF_DAY = 0;
 
 async function start() {
   const veil = document.getElementById('veil');
@@ -52,7 +57,8 @@ async function start() {
 
   function fit() {
     const a = innerWidth / innerHeight;
-    camera.aspect = a; camera.fov = a < 0.8 ? 68 : a < 1.2 ? 56 : 45; camera.updateProjectionMatrix();
+    camera.aspect = a; camera.updateProjectionMatrix();
+    rig.setFovScale((a < 0.8 ? 68 : a < 1.2 ? 56 : 45) / 45);
     renderer.setSize(innerWidth, innerHeight); post.setSize(innerWidth, innerHeight);
   }
   addEventListener('resize', fit); fit();
@@ -65,7 +71,8 @@ async function start() {
   function frame() {
     timer.update();
     const ctx = { dt: Math.min(timer.getDelta(), 0.05), t: timer.getElapsed(), camera };
-    ctx.uT = timeOfDay(rig.update(ctx));   // 0 golden hour at the hero, 1 blue hour at the contact shot
+    rig.update(ctx);
+    ctx.uT = TIME_OF_DAY;
     for (const p of parts) p.update(ctx);
     post.update(ctx);
     post.render();

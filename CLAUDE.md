@@ -5,30 +5,35 @@ Built for fun and to impress recruiters (consulting, strategy, operations). Curr
 https://gabindouchet.github.io/Portfolio/ until this one is finished.
 
 ## Concept
-A top-floor Paris loft over the rooftops, golden hour turning to blue hour (since phase 4, see
-PHASE4_PARIS.md). Realistic, warm, calm. No purple, magenta, neon, rain or traffic.
-Accent: warm sunset #f2a65a. Scrolling drives the camera through 5 shots and the time of day:
-1. Window: Paris horizon, Eiffel Tower left, sunset right (hero, name + tagline). Golden hour.
+A top-floor Paris loft over the rooftops at golden hour (since phase 4, see PHASE4_PARIS.md). The light
+is fixed: scrolling moves the camera only, it does not change the time of day. Realistic, warm, calm. No purple, magenta, neon, rain or traffic.
+Accent: warm sunset #f2a65a. Scrolling drives the camera through 5 shots:
+1. Window: Paris horizon, Eiffel Tower left, sunset right (hero, name + tagline)
 2. Loft: step back, full room visible (about)
 3. Desk: the papers on the desk, one per project (projects)
 4. Wall: framed diplomas on the left wall (education)
-5. Blue hour: back toward the window, lamps on, city lights lit (contact)
-Scroll only for now, no click interactions. Mobile: decide later.
+5. Connect: high-angle view (plongée) down onto the salon coffee table, "Let's connect" text over the empty middle
+   of the table (contact, see PHASE5_SALON.md). Always visible: it is open text, not a card.
+Content cards (shots 2 to 4) are hidden by default: a rounded chip in each shot opens its card
+(`src/content/cards.js`), a click outside or Escape closes it. Mobile: decide later.
 
 ## Current state
 `prototype/night-office.html` is the original night prototype: the camera path and scroll feel still
 come from it, the night look does not. `archive/city-night-realistic.js` is an unused night city.
 - Window view (`src/scene/paris.js`): one photo on a 50 m plane at z = -30 with 2.5D depth parallax
   (`paris_depth.png`: R nearness, G sky, B lit windows) and a golden to blue hour grade driven by `uT`.
-- Time of day: `uT` = `timeOfDay(shot)` in `src/scene/shared.js` (0 hero, 0.35 desk, 1 contact), passed to
-  every part's `update(ctx)`.
-- Office: `public/models/office.glb` + golden hour EXR lightmaps. Baked shell is MeshBasicMaterial
-  (albedo x lightmap), tinted cool and dimmed as `uT` rises. Props are PBR lit by `src/scene/lights.js`:
-  sun (fades out, shadows), hemisphere fill, desk and floor lamp spots (ramp up). Papers, diplomas and
+- Time of day: `TIME_OF_DAY` in `src/main.js` (0 golden hour, 1 blue hour), fixed at 0 and passed as `uT`
+  to every part's `update(ctx)`. The blue hour grade still works if a value above 0 is set.
+- Office: `public/models/office.glb` (with the salon: sofa, armchairs, coffee table, books, espresso, Alps
+  frame, all real-time props) + golden hour EXR lightmaps, mirrored vertically on load (EXR rows are
+  bottom-up, glTF UVs top-down). Baked shell is MeshBasicMaterial
+  (albedo x lightmap), tinted cool and dimmed if `uT` rises. Props are PBR lit by `src/scene/lights.js`:
+  sun (shadows), hemisphere fill, desk and floor lamp spots (all follow `uT`). Papers, diplomas and
   laptop screen get canvas textures from content.json with UVs generated in code (the glb planes have none).
 - Post: r147 UnrealBloom (vendored, subtle for daylight) + grade pass (light fringe, ACES, gamma,
   vignette, grain). The grade is the output transform, so no OutputPass.
-- Camera: 5 keyframes (position + lookAt), eased interpolation, damped toward scroll, light mouse parallax.
+- Camera: 5 keyframes (position, lookAt, optional fov), eased interpolation, damped toward scroll, light
+  mouse parallax. The wall to connect segment blends view angles (`turn: 'right'`) so it turns instead of flipping.
 
 ## Stack and structure
 - Vite + vanilla JS ES modules + `three` from npm (latest stable) + `gsap` only if needed. No React.
@@ -37,7 +42,8 @@ come from it, the night look does not. `archive/city-night-realistic.js` is an u
   - `src/scene/` paris.js, office.js, lights.js, dust.js, shared.js
   - `src/post/` composer.js, LegacyBloomPass.js
   - `src/camera/` keyframes.js, scroll.js
-  - `src/content/content.json` (projects, education, contact: text lives here, not in code), overlay.js
+  - `src/content/content.json` (projects, education, contact: text lives here, not in code), overlay.js,
+    cards.js
   - `public/models/` glb files, `public/textures/`
 - Respect `prefers-reduced-motion`. Keep a "skip to content" path. HTML overlays carry all readable text.
 

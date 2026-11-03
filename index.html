@@ -16,7 +16,7 @@
 <div id="veil">Opening the window</div>
 
 <nav id="rail" aria-label="Shots">
-  <div data-i="0">Window</div><div data-i="1">Loft</div><div data-i="2">Desk</div><div data-i="3">Wall</div><div data-i="4">Blue hour</div>
+  <div data-i="0">Window</div><div data-i="1">Loft</div><div data-i="2">Desk</div><div data-i="3">Wall</div><div data-i="4">Connect</div>
 </nav>
 
 <main id="content">
@@ -30,33 +30,42 @@
   </section>
 
   <section class="shot right">
-    <div class="panel">
-      <p class="eyebrow">The loft</p>
-      <h2>Engineer first. <em>Strategist</em> by choice.</h2>
-      <p>Mechanical Engineering at Concordia, a single-seater with Formula SAE, six months of R&amp;D at Europe's leading aerial work platform manufacturer, and a semester at NUS. Now a Master in Management at ESSEC, aimed at consulting and operations.</p>
+    <div class="slot">
+      <button class="reveal" type="button" aria-expanded="false" aria-controls="card-about">About me</button>
+      <div class="panel card" id="card-about" role="region" aria-label="About me">
+        <p class="eyebrow">The loft</p>
+        <h2>Engineer first. <em>Strategist</em> by choice.</h2>
+        <p>Mechanical Engineering at Concordia, a single-seater with Formula SAE, six months of R&amp;D at Europe's leading aerial work platform manufacturer, and a semester at NUS. Now a Master in Management at ESSEC, aimed at consulting and operations.</p>
+      </div>
     </div>
   </section>
 
   <section class="shot">
-    <div class="panel">
-      <p class="eyebrow">On the desk · 6 files</p>
-      <h2>Work &amp; projects</h2>
-      <ul class="list" data-list="projects"></ul>
+    <div class="slot">
+      <button class="reveal" type="button" aria-expanded="false" aria-controls="card-projects">Projects</button>
+      <div class="panel card" id="card-projects" role="region" aria-label="Projects">
+        <p class="eyebrow">On the desk · 6 files</p>
+        <h2>Work &amp; projects</h2>
+        <ul class="list" data-list="projects"></ul>
+      </div>
     </div>
   </section>
 
   <section class="shot right">
-    <div class="panel">
-      <p class="eyebrow">On the wall</p>
-      <h2>Where it started</h2>
-      <ul class="list" data-list="education"></ul>
+    <div class="slot">
+      <button class="reveal" type="button" aria-expanded="false" aria-controls="card-education">Education</button>
+      <div class="panel card" id="card-education" role="region" aria-label="Education">
+        <p class="eyebrow">On the wall</p>
+        <h2>Where it started</h2>
+        <ul class="list" data-list="education"></ul>
+      </div>
     </div>
   </section>
 
-  <section class="shot">
+  <section class="shot connect">
     <div class="panel">
-      <p class="eyebrow">Lights stay on</p>
-      <h2>Let's <em>build</em> something.</h2>
+      <p class="eyebrow">Coffee on the table</p>
+      <h2>Let's <em>connect</em>.</h2>
       <p class="contact" data-contact="email"></p>
       <div class="links" data-contact="links"></div>
     </div>

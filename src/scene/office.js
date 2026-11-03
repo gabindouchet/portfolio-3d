@@ -121,6 +121,9 @@ async function load(scene, shellMats, shadeMat) {
     const src = mesh.material;
     const lightMap = await exr.loadAsync(`${BASE}textures/office/lightmaps/${src.userData.lightmap}`);
     lightMap.channel = 0;
+    // EXRLoader stores rows bottom-up while glTF UVs read top-down: mirror vertically, or every baked
+    // shadow (papers, salon, carpet) lands in the wrong place
+    lightMap.repeat.set(1, -1); lightMap.offset.set(0, 1);
     mesh.material = new THREE.MeshBasicMaterial({ name: src.name, map: src.map, lightMap, lightMapIntensity: LIGHTMAP_INTENSITY, side: src.side });
     shellMats.push(mesh.material);
     src.dispose();
