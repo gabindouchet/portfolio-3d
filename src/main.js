@@ -69,6 +69,7 @@ async function start() {
   const timer = new THREE.Timer();
   let first = true;
   function frame() {
+    requestAnimationFrame(frame);   // first, so an error in one frame cannot stop the loop
     timer.update();
     const ctx = { dt: Math.min(timer.getDelta(), 0.05), t: timer.getElapsed(), camera };
     rig.update(ctx);
@@ -77,7 +78,6 @@ async function start() {
     post.update(ctx);
     post.render();
     if (first) { first = false; veil.classList.add('gone'); }
-    requestAnimationFrame(frame);
   }
   frame();
 }

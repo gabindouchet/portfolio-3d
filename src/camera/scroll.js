@@ -19,7 +19,8 @@ export function createCameraRig(camera, { shots, railItems, reduce }) {
     const y = scrollY;
     let i = 0; while (i < tops.length - 1 && y >= tops[i + 1]) i++;
     const span = i < tops.length - 1 ? tops[i + 1] - tops[i] : 1;
-    target = Math.min(KEYS.length - 1, i + (i < tops.length - 1 ? (y - tops[i]) / span : 0));
+    // clamp both ends: rubber-band overscroll on macOS reports a negative scrollY above the top
+    target = Math.max(0, Math.min(KEYS.length - 1, i + (i < tops.length - 1 ? (y - tops[i]) / span : 0)));
   }
   addEventListener('scroll', readScroll, { passive: true });
   addEventListener('pointermove', e => { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; }, { passive: true });
@@ -32,7 +33,7 @@ export function createCameraRig(camera, { shots, railItems, reduce }) {
     update({ t, dt }) {
       cur += (target - cur) * (reduce ? 1 : 1 - Math.exp(-dt * 4.5));
       smx += (mx - smx) * 0.05; smy += (my - smy) * 0.05;
-      const i = Math.min(Math.floor(cur), KEYS.length - 2), f = ease(cur - i);
+      const i = Math.max(0, Math.min(Math.floor(cur), KEYS.length - 2)), f = ease(Math.min(1, Math.max(0, cur - i)));
       tmpP.lerpVectors(KEYS[i].p, KEYS[i + 1].p, f);
       if (KEYS[i + 1].turn) {
         const a = angles[i], b = angles[i + 1];
